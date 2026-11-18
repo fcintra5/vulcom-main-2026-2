@@ -40,7 +40,6 @@ app.use((req, res, next) => {
 })
 
 
-import auth from './middleware/auth.js'
 app.use(auth)
 
 
