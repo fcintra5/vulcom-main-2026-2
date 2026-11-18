@@ -28,6 +28,14 @@ app.use(json())
 app.use(urlencoded({ extended: false }))
 app.use(cookieParser())
 
+app.use((req, res, next) => {
+  res.cookie('cookie-js', 'Cookie acessível via JavaScript', {
+    secure: true,
+    httpOnly: false
+  })
+  next()
+})
+
 
 /*********** ROTAS DA API **************/
 

@@ -1,10 +1,10 @@
 import React from 'react'
 import Typography from '@mui/material/Typography'
 
-
 export default function Homepage() {
 
   const [entries, setEntries] = React.useState([])
+  const [cookies, setCookies] = React.useState([])
 
   React.useEffect(() => {
     const data = Object.keys(localStorage).map(key => ({
@@ -13,6 +13,19 @@ export default function Homepage() {
     }))
 
     setEntries(data)
+
+    // Lê os cookies acessíveis via JavaScript (cookies HttpOnly não aparecem aqui)
+    const cookieData = document.cookie
+      ? document.cookie.split('; ').map(cookie => {
+          const pos = cookie.indexOf('=')
+          return {
+            key: cookie.slice(0, pos),
+            value: decodeURIComponent(cookie.slice(pos + 1))
+          }
+        })
+      : []
+
+    setCookies(cookieData)
   }, [])
 
   return(
@@ -20,9 +33,9 @@ export default function Homepage() {
       <Typography variant="h1" gutterBottom>
         Projeto VULCOM
       </Typography>
-
+      
       <Typography>
-        Sistema para análise e estudo de vulnerabilidades comuns
+        Sistema para análise e estudo de vulnerabilidades comuns  
       </Typography>
 
       <Typography variant="h2" gutterBottom sx={{ mt: 4 }}>
@@ -49,6 +62,37 @@ export default function Homepage() {
           ))}
         </ul>
       )}
+
+      <Typography variant="h2" gutterBottom sx={{ mt: 4 }}>
+        Cookies encontrados
+      </Typography>
+
+      <Typography>
+        Cookies acessíveis nesta página via document.cookie. Cookies HttpOnly
+        não podem ser lidos pelo JavaScript.
+      </Typography>
+
+      {cookies.length === 0 ? (
+        <Typography>Nenhum cookie encontrado.</Typography>
+      ) : (
+        <ul>
+          {cookies.map(cookie => (
+            <li key={`${cookie.key}=${cookie.value}`}>
+              <Typography component="div">
+                <strong>Nome:</strong> {cookie.key}
+              </Typography>
+
+              <Typography
+                component="pre"
+                sx={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}
+              >
+                {cookie.value}
+              </Typography>
+            </li>
+          ))}
+        </ul>
+      )}
+
     </>
   )
 }
