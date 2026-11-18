@@ -39,9 +39,10 @@ controller.retrieveAll = async function(req, res) {
     const result = await prisma.user.findMany({
       select: {
         id: true,
-        name: true,
+        fullname: true,
+        username: true,
         email: true,
-        createdAt: true
+        is_admin: true
       }
     })
 
@@ -59,9 +60,10 @@ controller.retrieveOne = async function(req, res) {
       where: { id: Number(req.params.id) },
       select: {
         id: true,
-        name: true,
+        fullname: true,
+        username: true,
         email: true,
-        createdAt: true
+        is_admin: true
       }
     })
 

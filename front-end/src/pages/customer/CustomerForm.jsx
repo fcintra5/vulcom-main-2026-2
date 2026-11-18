@@ -103,11 +103,29 @@ export default function CustomerForm() {
       // no banco de dados
       // Se houver parâmetro na rota, significa que estamos editando.
       // Portanto, precisamos enviar os dados ao back-end com o verbo PUT
-      if(params.id) await myfetch.put(`/customers/${params.id}`, customer)
+      const customerData = {
+        name: customer.name,
+        ident_document: customer.ident_document,
+        birth_date: customer.birth_date
+          ? (customer.birth_date instanceof Date
+            ? customer.birth_date.toISOString()
+            : customer.birth_date)
+          : null,
+        street_name: customer.street_name,
+        house_number: customer.house_number,
+        complements: customer.complements || null,
+        district: customer.district || 'Centro',
+        municipality: customer.municipality,
+        state: customer.state,
+        phone: customer.phone,
+        email: customer.email
+      }
+
+      if(params.id) await myfetch.put(`/customers/${params.id}`, customerData)
       
       // Senão, os dados serão enviados com o método POST para a criação de
       // um novo cliente
-      else await myfetch.post('/customers', customer)
+      else await myfetch.post('/customers', customerData)
 
       // Deu certo, vamos exibir a mensagem de feedback que, quando fechada,
       // vai nos mandar de volta para a listagem de clientes
