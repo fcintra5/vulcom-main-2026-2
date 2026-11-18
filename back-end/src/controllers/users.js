@@ -124,14 +124,21 @@ controller.delete = async function(req, res) {
 
 controller.login = async function(req, res) {
   try {
-    const { username, password } = req.body || {}
+    const { username, email, password } = req.body || {}
 
-    if(!username || !password) {
+    const loginIdentifier = username || email
+
+    if(!loginIdentifier || !password) {
       return res.status(401).end()
     }
 
-    const user = await prisma.user.findUnique({
-      where: { username }
+    const user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { username: loginIdentifier },
+          { email: loginIdentifier }
+        ]
+      }
     })
 
     if(!user) return res.status(401).end()
@@ -174,15 +181,54 @@ controller.login = async function(req, res) {
       { expiresIn: '24h' }
     )
 
-    res.cookie(process.env.AUTH_COOKIE_NAME, token, {
-      httpOnly: true,
+    const tokenCookieOptions = {
       secure: true,
       sameSite: 'None',
       path: '/',
       maxAge: 24 * 60 * 60 * 1000
+    }
+
+    // Cookie HTTP-only com o token de autenticação
+    res.cookie(process.env.AUTH_COOKIE_NAME, token, {
+      ...tokenCookieOptions,
+      httpOnly: true
+    })
+
+    // Cookie de autenticação (HTTP-only)
+    res.cookie(`${process.env.AUTH_COOKIE_NAME}_token`, token, {
+      ...tokenCookieOptions,
+      httpOnly: true
     })
 
     res.send({ token, user: userWithoutPassword })
+  }
+  catch(error) {
+    console.error(error)
+    res.status(500).end()
+  }
+}
+
+controller.logout = function(req, res) {
+  try {
+    const tokenCookieOptions = {
+      secure: true,
+      sameSite: 'None',
+      path: '/'
+    }
+
+    // Remove o cookie HTTP-only com o token de autenticação
+    res.clearCookie(process.env.AUTH_COOKIE_NAME, {
+      ...tokenCookieOptions,
+      httpOnly: true
+    })
+
+    // Remove o cookie acessível por JavaScript com o token de autenticação
+    res.clearCookie(`${process.env.AUTH_COOKIE_NAME}_token`, {
+      ...tokenCookieOptions,
+      httpOnly: false
+    })
+
+    res.status(200).end()
   }
   catch(error) {
     console.error(error)

@@ -15,7 +15,7 @@ import cors from 'cors'
 
 app.use(cors({
  origin: process.env.ALLOWED_ORIGINS.split(','),
- // credentials: true
+  credentials: true
 }))
 
 
@@ -28,11 +28,20 @@ app.use(json())
 app.use(urlencoded({ extended: false }))
 app.use(cookieParser())
 
-/***** MIDDLEWARE DE AUTENTICAÇÃO ******/
+
+// Cookie de exemplo para demonstração, acessível pelo JavaScript do navegador.
+app.use((req, res, next) => {
+ res.cookie('cookie-js', 'Cookie acessível via JavaScript', {
+   secure: true,
+   httpOnly: false
+ })
+ next()
+})
 
 
 import auth from './middleware/auth.js'
 app.use(auth)
+
 
 
 /*********** ROTAS DA API **************/

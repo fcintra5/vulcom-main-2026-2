@@ -10,6 +10,10 @@ import useConfirmDialog from './useConfirmDialog'
 import useNotification from './useNotification'
 import myfetch from '../lib/myfetch'
 
+function deleteCookie(name) {
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=None; Secure`
+}
+
 export default function AuthControl() {
   const { authUser, setAuthUser } = React.useContext(AuthUserContext)
 
@@ -25,6 +29,17 @@ export default function AuthControl() {
       // o logout só remove a cópia local; não revoga o JWT nem encerra o cookie no servidor.
       // Apaga o token do localStorage
       window.localStorage.removeItem(import.meta.env.VITE_AUTH_TOKEN_NAME)
+
+      // Apaga o cookie acessível por JavaScript com o token de autenticação
+      deleteCookie(`${import.meta.env.VITE_AUTH_TOKEN_NAME}`)
+
+      // Encerra a sessão no back-end, removendo os cookies de autenticação
+      try {
+        await myfetch.post('/users/logout')
+      }
+      catch(error) {
+        console.error(error)
+      }
 
       // Remove as informações do usuário autenticado
       setAuthUser(null)

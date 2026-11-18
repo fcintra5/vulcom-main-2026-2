@@ -69,8 +69,8 @@ export default function Login() {
       // o token em localStorage fica acessível ao JavaScript executado por um XSS (A05).
       // Armazena o token retornado no localStorage (INSEGURO!)
       window.localStorage.setItem(
-          import.meta.env.VITE_AUTH_TOKEN_NAME,
-          response.token
+        import.meta.env.VITE_AUTH_TOKEN_NAME,
+        response.token
       )
 
       // Armazena as informações do usuário autenticado

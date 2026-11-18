@@ -8,6 +8,9 @@ export default function Homepage() {
  const [entries, setEntries] = React.useState([])
 
 
+ const [cookies, setCookies] = React.useState([])
+
+
  React.useEffect(() => {
    const data = Object.keys(localStorage).map(key => ({
      key,
@@ -16,6 +19,25 @@ export default function Homepage() {
 
 
    setEntries(data)
+ }, [])
+
+
+ React.useEffect(() => {
+   const authCookieName = import.meta.env.VITE_AUTH_TOKEN_NAME
+   const data = document.cookie
+     .split(';')
+     .map(cookie => cookie.trim())
+     .filter(cookie => cookie.length > 0)
+     .map(cookie => {
+       const separatorIndex = cookie.indexOf('=')
+       const key = separatorIndex === -1 ? cookie : cookie.slice(0, separatorIndex)
+       const value = separatorIndex === -1 ? '' : cookie.slice(separatorIndex + 1)
+       return { key, value }
+     })
+     .filter(cookie => cookie.key !== authCookieName)
+
+
+   setCookies(data)
  }, [])
 
 
@@ -35,7 +57,7 @@ export default function Homepage() {
      </Typography>
 
 
-     {entries.length === 0 ? (
+        {entries.length === 0 ? (
        <Typography>Nenhuma entrada encontrada.</Typography>
      ) : (
        <ul>
@@ -51,6 +73,40 @@ export default function Homepage() {
                sx={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}
              >
                {entry.value}
+             </Typography>
+           </li>
+         ))}
+       </ul>
+     )}
+
+
+     <Typography variant="h2" gutterBottom sx={{ mt: 4 }}>
+       Cookies encontrados
+     </Typography>
+
+
+     <Typography>
+       Cookies acessíveis nesta página via document.cookie. Cookies HttpOnly
+       não podem ser lidos pelo JavaScript.
+     </Typography>
+
+
+     {cookies.length === 0 ? (
+       <Typography>Nenhum cookie encontrado.</Typography>
+     ) : (
+       <ul>
+         {cookies.map(cookie => (
+           <li key={`${cookie.key}=${cookie.value}`}>
+             <Typography component="div">
+               <strong>Nome:</strong> {cookie.key}
+             </Typography>
+
+
+             <Typography
+               component="pre"
+               sx={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}
+             >
+               {cookie.value}
              </Typography>
            </li>
          ))}
