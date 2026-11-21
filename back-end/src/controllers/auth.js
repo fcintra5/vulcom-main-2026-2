@@ -6,7 +6,7 @@
 import jwt from 'jsonwebtoken'
 
 
-/*
+/*grep -n "import auth" src/controllers/app.js
  Algumas rotas, como POST /users/login, poderão ser
  acessadas sem a necessidade de apresentação do token.
  Cadastramos essas rotas no vetor bypassRoutes.

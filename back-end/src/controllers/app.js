@@ -28,7 +28,7 @@ app.use(json())
 app.use(urlencoded({ extended: false }))
 app.use(cookieParser())
 
-import auth from './middleware/auth.js'
+import auth from './auth.js'
 app.use(auth)
 
 /**** ROTAS DA API *****/

@@ -1,3 +1,4 @@
+
 import React from 'react'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
@@ -24,7 +25,10 @@ export default function FooterBar() {
           }
         }}
       >
-        Desenvolvido e mantido com <CoffeeIcon fontSize="small" /> por <a href="mailto:professor@faustocintra.com.br">Prof. Fausto Cintra</a>
+        Desenvolvido e mantido com <CoffeeIcon fontSize="small" /> por{' '}
+        <a href="mailto:roberta.barcarollo@aluno.cps.sp.gov.br">
+          Roberta Barcarollo
+        </a>
       </Typography>
     </Toolbar>
   )
